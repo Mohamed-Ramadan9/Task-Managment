@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Task_Managment.Context;
 using Task_Managment.Entities;
 using Task_Managment.Interfaces.Repositories;
+using Task_Managment.SharedModels.Response;
 
 namespace Task_Managment.Repositories
 {
@@ -14,8 +15,28 @@ namespace Task_Managment.Repositories
         public async Task<Project?> GetByIdAsync(int id) =>
             await _context.Projects.Include(p => p.Tasks).Where(p => p.isDeleted == false).FirstOrDefaultAsync(p => p.Id == id);
 
-        public async Task<IEnumerable<Project>> GetAllAsync() =>
-            await _context.Projects.Include(p => p.Tasks).Where(p => p.isDeleted == false).ToListAsync();
+        public async Task<PagedResult<Project>> GetAllAsync(int pageNumber, int pageSize)
+        {
+            var query = _context.Projects
+                .Include(p => p.Tasks)
+                .Where(p => !p.isDeleted).AsNoTracking();
+
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .OrderBy(p => p.Id) 
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<Project>
+            {
+                Items = items,
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+        }
 
         public async System.Threading.Tasks.Task AddAsync(Project project)
         {

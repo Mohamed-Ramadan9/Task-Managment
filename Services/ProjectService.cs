@@ -3,9 +3,11 @@ using AutoMapper;
 using Task_Managment.DTOs.Project.Create;
 using Task_Managment.DTOs.Project.Read;
 using Task_Managment.DTOs.Project.Update;
+using Task_Managment.DTOs.Task.Read;
 using Task_Managment.Entities;
 using Task_Managment.Interfaces.Repositories;
 using Task_Managment.Interfaces.Services;
+using Task_Managment.SharedModels.Response;
 
 namespace Task_Managment.Services
 {
@@ -22,18 +24,26 @@ namespace Task_Managment.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ProjectReadDTO>> GetAllAsync()
+        public async Task<PagedResult<ProjectReadDTO>> GetAllAsync(int pageNumber, int pageSize)
         {
             try
             {
-                var projects = await _projectRepo.GetAllAsync();
-                return _mapper.Map<IEnumerable<ProjectReadDTO>>(projects);
+                var pagedTasks = await _projectRepo.GetAllAsync(pageNumber, pageSize);
 
+                var mappedResult = new PagedResult<ProjectReadDTO>
+                {
+                    Items = _mapper.Map<IEnumerable<ProjectReadDTO>>(pagedTasks.Items),
+                    TotalCount = pagedTasks.TotalCount,
+                    PageNumber = pagedTasks.PageNumber,
+                    PageSize = pagedTasks.PageSize
+                };
+
+                return mappedResult;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error fetching all projects");
-                throw new ApplicationException("An error occurred while fetching projects.", ex);
+                _logger.LogError(ex, "Error fetching paginated tasks");
+                throw new ApplicationException("An error occurred while fetching paginated tasks.", ex);
             }
         }
 

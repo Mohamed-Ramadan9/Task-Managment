@@ -33,16 +33,17 @@ namespace Task_Managment.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [HttpGet]
+        public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
-                var tasks = await _taskService.GetAllAsync();
-                return Ok(tasks);
+                var pagedTasks = await _taskService.GetAllAsync(pageNumber, pageSize);
+                return Ok(pagedTasks);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error fetching all tasks");
+                _logger.LogError(ex, "Error fetching paginated tasks");
                 return StatusCode(500, "An error occurred while retrieving tasks.");
             }
         }

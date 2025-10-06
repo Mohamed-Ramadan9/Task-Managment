@@ -174,3 +174,4 @@ G:\Task Managment\Task-Managment\obj\Debug\net8.0\Task-Managment.pdb
 G:\Task Managment\Task-Managment\obj\Debug\net8.0\Task-Managment.genruntimeconfig.cache
 G:\Task Managment\Task-Managment\obj\Debug\net8.0\ref\Task-Managment.dll
 G:\Task Managment\Task-Managment\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+G:\Task Managment\Task-Managment\obj\Debug\net8.0\Task-Managment.sourcelink.json

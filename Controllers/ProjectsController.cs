@@ -35,19 +35,20 @@ namespace Task_Managment.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
-                var projects = await _projectService.GetAllAsync();
-                return Ok(projects);
+                var pagedProjects = await _projectService.GetAllAsync(pageNumber, pageSize);
+                return Ok(pagedProjects);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error fetching all projects");
+                _logger.LogError(ex, "Error fetching paginated projects");
                 return StatusCode(500, "An error occurred while retrieving projects.");
             }
         }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
